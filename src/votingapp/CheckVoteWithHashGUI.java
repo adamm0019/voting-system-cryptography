@@ -4,12 +4,10 @@
  */
 package votingapp;
 
-import java.security.MessageDigest;
-import java.util.Base64;
+
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -80,27 +78,31 @@ public class CheckVoteWithHashGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void checkVoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkVoteButtonActionPerformed
+        // method to check the hash that is entered when the check button is clicked
+        
+        // checking the entered hash and removing whitespace using trim()
         String enteredHash = enterHashTextField.getText().trim();
 
-        if (enteredHash.isEmpty()) {
+        if (enteredHash.isEmpty()) { // if the hash text field is empty, display a message
             JOptionPane.showMessageDialog(this, "Enter a valid hash");
             return;
         }
 
-        HashMap<String, byte[]> voteHashes = vGUI.getVoteHashes();
+        HashMap<String, byte[]> voteHashes = vGUI.getVoteHashes(); // getting the hashmap containing the candidate name and hash from VotingGUI
 
-        for (Map.Entry<String, byte[]> entry : voteHashes.entrySet()) {
+        for (Map.Entry<String, byte[]> entry : voteHashes.entrySet()) { // iterate throuugh the hashmap and retrieve the hashes and candidate names
+            // get the key and value from the hash map
             String candidateName = entry.getKey();
             byte[] voteHash = entry.getValue();
 
-            String calculatedHash = vGUI.calculateHash(voteHash);
+            String calculatedHash = vGUI.calculateHash(voteHash); // using the calculateHash method in VotingGUI to calculate the hash
 
-            if (enteredHash.equals(calculatedHash)) {
-                JOptionPane.showMessageDialog(this, "You voted for " + candidateName);
+            if (enteredHash.equals(calculatedHash)) { // if the entered hash is valid
+                JOptionPane.showMessageDialog(this, "You voted for " + candidateName); // display the corresponding key (candidate name)
                 return;
             }
         }
-        JOptionPane.showMessageDialog(this, "No candidate found for that hash");
+        JOptionPane.showMessageDialog(this, "No candidate found for that hash"); // if there is no match for the hash in the hashmap, return a message
     }//GEN-LAST:event_checkVoteButtonActionPerformed
 
     /**
