@@ -1,10 +1,19 @@
-
 package votingapp;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -12,19 +21,19 @@ import javax.swing.table.DefaultTableModel;
  * @author jake
  */
 public class VotingGUI extends javax.swing.JFrame {
-    
-    private HashMap<String, Integer> candidateVotes = new HashMap<>();
+
+    private final HashMap<String, byte[]> candidateVotes = new HashMap<>();
+    private final HashMap<String, Integer> voteCounts = new HashMap<>();
+    private final SecretKey encryptionKey;
 
     /**
      * Creates new form VotingGUI
      */
-    
-    
     public VotingGUI() {
         initComponents();
+        encryptionKey = generateEncryptionKey("xIc3ovkl0293HlVYp");
     }
-        private int Candidate1 = 0;
-        private int Candidate2 = 0;
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -39,6 +48,7 @@ public class VotingGUI extends javax.swing.JFrame {
         candidateVoteTable = new javax.swing.JTable();
         helpLabel = new javax.swing.JLabel();
         voteButton = new javax.swing.JButton();
+        totalVotes = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Voting System");
@@ -58,27 +68,44 @@ public class VotingGUI extends javax.swing.JFrame {
                 {null, null}
             },
             new String [] {
-                "Candidate", "Number of Votes"
+                "Candidate", "Hash"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, true
+                false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        candidateVoteTable.setToolTipText("Double Click the value in the \"Hash\" column to copy it to clipboard");
+        candidateVoteTable.setCellSelectionEnabled(true);
         candidateVoteTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         candidateVoteTable.setFocusable(false);
+        candidateVoteTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                candidateVoteTableMouseClicked(evt);
+            }
+        });
         tableScrollPane.setViewportView(candidateVoteTable);
 
-        helpLabel.setText("Please select a candidate to vote for:");
+        helpLabel.setText("Select a candidate:");
 
-        voteButton.setText("Vote");
+        voteButton.setText("Vote for Candidate");
         voteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 voteButtonActionPerformed(evt);
+            }
+        });
+
+        totalVotes.setBackground(new java.awt.Color(0, 0, 204));
+        totalVotes.setForeground(new java.awt.Color(0, 0, 204));
+        totalVotes.setText("<html> <u>Verify integrity of your vote</u> ");
+        totalVotes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        totalVotes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                totalVotesMouseClicked(evt);
             }
         });
 
@@ -87,34 +114,35 @@ public class VotingGUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(177, 177, 177)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(47, 47, 47)
-                                        .addComponent(candidateSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(46, 46, 46))
-                                    .addComponent(helpLabel)))
+                                .addComponent(candidateSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(246, 246, 246)
-                                .addComponent(voteButton)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(helpLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(totalVotes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(198, 198, 198)
+                .addComponent(voteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(helpLabel)
-                .addGap(18, 18, 18)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(totalVotes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(helpLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(candidateSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addComponent(voteButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -132,22 +160,108 @@ public class VotingGUI extends javax.swing.JFrame {
     private void voteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voteButtonActionPerformed
         String selectedCandidate = (String) candidateSelectionComboBox.getSelectedItem();
         if (selectedCandidate != null) {
-            candidateVotes.put(selectedCandidate, candidateVotes.getOrDefault(selectedCandidate, 0) + 1);
-            updateTable();
+            String voterData = "ID:123;Candidate " + selectedCandidate;
+
+            try {
+                byte[] encryptedVote = encryptVote(voterData, encryptionKey);
+
+                candidateVotes.put(selectedCandidate, encryptedVote);
+
+                int currentVoteCount = voteCounts.getOrDefault(selectedCandidate, 0);
+                voteCounts.put(selectedCandidate, currentVoteCount + 1);
+
+                updateTable();
+            } catch (Exception e) {
+                e.getMessage();
+            }
         }
     }//GEN-LAST:event_voteButtonActionPerformed
+
+    private void copyToClipboard(String text) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection selection = new StringSelection(text);
+        clipboard.setContents(selection, null);
+
+        JOptionPane.showMessageDialog(this, "Hash Copied", null, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    private void totalVotesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_totalVotesMouseClicked
+        CheckVoteWithHashGUI vGUI = new CheckVoteWithHashGUI();
+        vGUI.setVotingGUI(this);
+        vGUI.setVisible(true);
+    }//GEN-LAST:event_totalVotesMouseClicked
+
+    private void candidateVoteTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_candidateVoteTableMouseClicked
+        if (evt.getClickCount() == 2) {
+            int selectedRow = candidateVoteTable.getSelectedRow();
+            int hashColumnIndex = 1;
+
+            if (selectedRow >= 0) {
+                String hash = (String) candidateVoteTable.getValueAt(selectedRow, hashColumnIndex);
+                if (hash != null) {
+                    copyToClipboard(hash);
+                }
+            }
+        }
+    }//GEN-LAST:event_candidateVoteTableMouseClicked
+
+    public void openTotalVotesWindow() {
+        CheckVoteWithHashGUI totalVotesGUI = new CheckVoteWithHashGUI();
+        totalVotesGUI.setVotingGUI(this); // Set the reference to VotingGUI
+        totalVotesGUI.setVisible(true);
+    }
 
     private void updateTable() {
         DefaultTableModel model = (DefaultTableModel) candidateVoteTable.getModel();
         model.setRowCount(0);
-        
-        for(Map.Entry<String, Integer> entry : candidateVotes.entrySet()) {
+
+        for (Map.Entry<String, byte[]> entry : candidateVotes.entrySet()) {
             String candidateName = entry.getKey();
-            int voteCount = entry.getValue();
-            model.addRow(new Object[]{candidateName, voteCount});
+            byte[] encryptedVote = entry.getValue();
+            model.addRow(new Object[]{candidateName, calculateHash(encryptedVote)});
         }
     }
-    
+
+    public HashMap<String, byte[]> getVoteHashes() {
+        return candidateVotes;
+    }
+
+    private byte[] encryptVote(String voteData, SecretKey key) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+        return cipher.doFinal(voteData.getBytes());
+    }
+
+    public String calculateHash(byte[] data) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(data);
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private SecretKey generateEncryptionKey(String passphrase) {
+        try {
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+            int iterationCount = 10000;
+            int keyLength = 128;
+
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+            PBEKeySpec spec = new PBEKeySpec(passphrase.toCharArray(), salt, iterationCount, keyLength);
+            SecretKey tmp = factory.generateSecret(spec);
+            return new SecretKeySpec(tmp.getEncoded(), "AES");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -180,9 +294,7 @@ public class VotingGUI extends javax.swing.JFrame {
             public void run() {
                 new VotingGUI().setVisible(true);
             }
-                 
-        
-    
+
         });
     }
 
@@ -191,6 +303,7 @@ public class VotingGUI extends javax.swing.JFrame {
     private javax.swing.JTable candidateVoteTable;
     private javax.swing.JLabel helpLabel;
     private javax.swing.JScrollPane tableScrollPane;
+    private javax.swing.JLabel totalVotes;
     private javax.swing.JButton voteButton;
     // End of variables declaration//GEN-END:variables
 }
