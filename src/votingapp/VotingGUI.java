@@ -3,12 +3,17 @@ package votingapp;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author jake
  */
 public class VotingGUI extends javax.swing.JFrame {
+    
+    private HashMap<String, Integer> candidateVotes = new HashMap<>();
 
     /**
      * Creates new form VotingGUI
@@ -17,8 +22,6 @@ public class VotingGUI extends javax.swing.JFrame {
     
     public VotingGUI() {
         initComponents();
-
-
     }
         private int Candidate1 = 0;
         private int Candidate2 = 0;
@@ -34,8 +37,8 @@ public class VotingGUI extends javax.swing.JFrame {
         candidateSelectionComboBox = new javax.swing.JComboBox<>();
         tableScrollPane = new javax.swing.JScrollPane();
         candidateVoteTable = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        helpLabel = new javax.swing.JLabel();
+        voteButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Voting System");
@@ -51,17 +54,15 @@ public class VotingGUI extends javax.swing.JFrame {
         candidateVoteTable.setAutoCreateRowSorter(true);
         candidateVoteTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Candidate 1", "Candidate 2", "Candidate 3", "Candidate 4"
+                "Candidate", "Number of Votes"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -72,12 +73,12 @@ public class VotingGUI extends javax.swing.JFrame {
         candidateVoteTable.setFocusable(false);
         tableScrollPane.setViewportView(candidateVoteTable);
 
-        jLabel1.setText("Please select a candidate to vote for:");
+        helpLabel.setText("Please select a candidate to vote for:");
 
-        jButton1.setText("Vote");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        voteButton.setText("Vote");
+        voteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                voteButtonActionPerformed(evt);
             }
         });
 
@@ -99,10 +100,10 @@ public class VotingGUI extends javax.swing.JFrame {
                                         .addGap(47, 47, 47)
                                         .addComponent(candidateSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(46, 46, 46))
-                                    .addComponent(jLabel1)))
+                                    .addComponent(helpLabel)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(246, 246, 246)
-                                .addComponent(jButton1)))
+                                .addComponent(voteButton)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -110,11 +111,11 @@ public class VotingGUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(jLabel1)
+                .addComponent(helpLabel)
                 .addGap(18, 18, 18)
                 .addComponent(candidateSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(voteButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -128,10 +129,25 @@ public class VotingGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_candidateSelectionComboBoxActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void voteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voteButtonActionPerformed
+        String selectedCandidate = (String) candidateSelectionComboBox.getSelectedItem();
+        if (selectedCandidate != null) {
+            candidateVotes.put(selectedCandidate, candidateVotes.getOrDefault(selectedCandidate, 0) + 1);
+            updateTable();
+        }
+    }//GEN-LAST:event_voteButtonActionPerformed
 
+    private void updateTable() {
+        DefaultTableModel model = (DefaultTableModel) candidateVoteTable.getModel();
+        model.setRowCount(0);
+        
+        for(Map.Entry<String, Integer> entry : candidateVotes.entrySet()) {
+            String candidateName = entry.getKey();
+            int voteCount = entry.getValue();
+            model.addRow(new Object[]{candidateName, voteCount});
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -173,8 +189,8 @@ public class VotingGUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> candidateSelectionComboBox;
     private javax.swing.JTable candidateVoteTable;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel helpLabel;
     private javax.swing.JScrollPane tableScrollPane;
+    private javax.swing.JButton voteButton;
     // End of variables declaration//GEN-END:variables
 }
