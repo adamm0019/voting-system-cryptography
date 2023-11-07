@@ -17,19 +17,6 @@ public class VotingGUI extends javax.swing.JFrame {
     
     public VotingGUI() {
         initComponents();
-        candidate1.setVisible(false);
-        candidate2.setVisible(false);
-        info1.setVisible(false);
-        info2.setVisible(false);
-        info1.setEditable(false);
-        info2.setEditable(false);
-        info1.setOpaque(true);
-        info2.setOpaque(true);
-        submitVote.setVisible(false);
-        vote1.setVisible(false);
-        vote2.setVisible(false);
-        thanks.setVisible(false);
-        back.setVisible(false);
 
 
     }
@@ -44,85 +31,53 @@ public class VotingGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        secureVote = new javax.swing.JLabel();
-        title = new javax.swing.JLabel();
-        StartButton = new javax.swing.JButton();
-        candidate1 = new javax.swing.JLabel();
-        candidate2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        info1 = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        info2 = new javax.swing.JTextArea();
-        vote1 = new javax.swing.JCheckBox();
-        vote2 = new javax.swing.JCheckBox();
-        submitVote = new javax.swing.JButton();
-        thanks = new javax.swing.JLabel();
-        back = new javax.swing.JButton();
+        candidateSelectionComboBox = new javax.swing.JComboBox<>();
+        tableScrollPane = new javax.swing.JScrollPane();
+        candidateVoteTable = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Voting System");
+        setResizable(false);
 
-        secureVote.setText("Secure Online Voting System");
-
-        title.setFont(new java.awt.Font("Calibri", 1, 36)); // NOI18N
-        title.setText("2023 Election");
-
-        StartButton.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        StartButton.setText("Start");
-        StartButton.addActionListener(new java.awt.event.ActionListener() {
+        candidateSelectionComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Candidate 1", "Candidate 2", "Candidate 3", "Candidate 4" }));
+        candidateSelectionComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StartButtonActionPerformed(evt);
+                candidateSelectionComboBoxActionPerformed(evt);
             }
         });
 
-        candidate1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        candidate1.setText("Candidate #1");
+        candidateVoteTable.setAutoCreateRowSorter(true);
+        candidateVoteTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Candidate 1", "Candidate 2", "Candidate 3", "Candidate 4"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
 
-        candidate2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        candidate2.setText("Candidate #2");
-
-        info1.setColumns(20);
-        info1.setLineWrap(true);
-        info1.setRows(5);
-        info1.setText("John O'Connor is our first candidate if you would like to vote for him tick the box below");
-        info1.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(info1);
-
-        info2.setColumns(20);
-        info2.setLineWrap(true);
-        info2.setRows(5);
-        info2.setText("Patrick O'Shea is our second candidate, if you would like to vote for him tick the box below");
-        info2.setWrapStyleWord(true);
-        jScrollPane2.setViewportView(info2);
-
-        vote1.setText("I vote for #1");
-        vote1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vote1ActionPerformed(evt);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
+        candidateVoteTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        candidateVoteTable.setFocusable(false);
+        tableScrollPane.setViewportView(candidateVoteTable);
 
-        vote2.setText("I vote for #2");
-        vote2.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setText("Please select a candidate to vote for:");
+
+        jButton1.setText("Vote");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                vote2ActionPerformed(evt);
-            }
-        });
-
-        submitVote.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        submitVote.setText("SUBMIT VOTE");
-        submitVote.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                submitVoteActionPerformed(evt);
-            }
-        });
-
-        thanks.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        thanks.setText("Thank you for submitting your vote");
-
-        back.setText("Back");
-        back.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -130,203 +85,52 @@ public class VotingGUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(StartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(32, 32, 32)
-                                .addComponent(vote1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(submitVote)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(back, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(85, 85, 85))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(6, 6, 6)
-                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(21, 21, 21)
-                                        .addComponent(candidate1)))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(48, 48, 48)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addContainerGap()
+                        .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(candidate2)
-                                .addGap(52, 52, 52))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(177, 177, 177)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(vote2)
-                                    .addComponent(secureVote))
-                                .addContainerGap())))))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(thanks)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(47, 47, 47)
+                                        .addComponent(candidateSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(46, 46, 46))
+                                    .addComponent(jLabel1)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(246, 246, 246)
+                                .addComponent(jButton1)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(title, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(candidate2)
-                    .addComponent(candidate1))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(candidateSelectionComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(143, 143, 143)
-                        .addComponent(secureVote, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(vote1)
-                                    .addComponent(vote2))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(submitVote))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(back, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(StartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38))))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(thanks)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void StartButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartButtonActionPerformed
-        title.setVisible(false);
-        StartButton.setVisible(false);
-        candidate1.setVisible(true);
-        candidate2.setVisible(true);
-        info1.setVisible(true);
-        info2.setVisible(true);
-        info1.setEditable(false);
-        info2.setEditable(false);
-        info1.setOpaque(false);
-        info2.setOpaque(false);
-        vote2.setVisible(true);
-        vote1.setVisible(true);
-    }//GEN-LAST:event_StartButtonActionPerformed
+    private void candidateSelectionComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_candidateSelectionComboBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_candidateSelectionComboBoxActionPerformed
 
-    private void vote1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vote1ActionPerformed
-        submitVote.setVisible(true);
-        
-        vote1.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                   submitVote.setVisible(true);
-                   vote2.setVisible(false);
-                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    submitVote.setVisible(false);
-                    vote2.setVisible(true);
-                }
-            }
-        });
-                
-                
-                
-    }//GEN-LAST:event_vote1ActionPerformed
-
-    private void submitVoteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitVoteActionPerformed
-     StartButton.setVisible(false);
-     candidate1.setVisible(false);
-     candidate2.setVisible(false);
-     info1.setVisible(false);
-     info2.setVisible(false);
-     jScrollPane1.setVisible(false);
-     jScrollPane2.setVisible(false); 
-     submitVote.setVisible(false);
-     title.setVisible(false);
-     vote1.setVisible(false);
-     vote2.setVisible(false);
-     secureVote.setVisible(false);
-     thanks.setVisible(true);
-     back.setVisible(true);
-     
-     vote1.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {                 
-                   Candidate1++;
-                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    submitVote.setVisible(false);
-                    
-                }
-            }
-        });
-     
-     vote2.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                   Candidate2++;
-                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    submitVote.setVisible(false);
-                    
-                    
-                }
-            }
-        });
-    }//GEN-LAST:event_submitVoteActionPerformed
-
-    private void vote2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_vote2ActionPerformed
-        submitVote.setVisible(true);
-        
-        vote2.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                   submitVote.setVisible(true);
-                   vote1.setVisible(false);
-                } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                    submitVote.setVisible(false);
-                    vote1.setVisible(true);
-                    
-                }
-            }
-        });
-    }//GEN-LAST:event_vote2ActionPerformed
-
-    private void backActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backActionPerformed
-        title.setVisible(true);
-        secureVote.setVisible(true);
-        StartButton.setVisible(true);
-        back.setVisible(false);
-        thanks.setVisible(false);
-        
-    }//GEN-LAST:event_backActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -339,7 +143,7 @@ public class VotingGUI extends javax.swing.JFrame {
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Windows".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -367,19 +171,10 @@ public class VotingGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton StartButton;
-    private javax.swing.JButton back;
-    private javax.swing.JLabel candidate1;
-    private javax.swing.JLabel candidate2;
-    private javax.swing.JTextArea info1;
-    private javax.swing.JTextArea info2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel secureVote;
-    private javax.swing.JButton submitVote;
-    private javax.swing.JLabel thanks;
-    private javax.swing.JLabel title;
-    private javax.swing.JCheckBox vote1;
-    private javax.swing.JCheckBox vote2;
+    private javax.swing.JComboBox<String> candidateSelectionComboBox;
+    private javax.swing.JTable candidateVoteTable;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane tableScrollPane;
     // End of variables declaration//GEN-END:variables
 }
